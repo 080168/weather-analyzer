@@ -2,143 +2,244 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WeatherEdge AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WeatherEdge v3</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#07080d;--s1:#0d1017;--s2:#111520;--border:#1a2035;--border2:#222d45;--amber:#f5a623;--amber2:#ffcc66;--cyan:#00c9e0;--green:#00e599;--red:#ff4560;--blue:#4d9fff;--muted:#3a4a65;--text:#d0daf0;--sub:#5a6a88;--white:#eef2ff;}
+:root{
+  --bg:#07080d;--s1:#0d1017;--s2:#111520;
+  --border:#1a2035;--border2:#222d45;
+  --amber:#f5a623;--amber2:#ffcc66;
+  --cyan:#00c9e0;--green:#00e599;
+  --red:#ff4560;--blue:#4d9fff;
+  --purple:#a78bfa;
+  --muted:#3a4a65;--text:#d0daf0;
+  --sub:#5a6a88;--white:#eef2ff;
+  --tab-h:64px;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;max-width:440px;margin:0 auto;min-height:100vh;}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:999;}
-.topbar{position:sticky;top:0;background:rgba(7,8,13,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:100;}
-.logo{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--white);}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;max-width:440px;margin:0 auto;min-height:100vh;padding-bottom:var(--tab-h);}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:998;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;background:rgba(7,8,13,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;z-index:100;}
+.logo{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:2px;color:var(--white);}
 .logo span{color:var(--amber);}
-.live-badge{display:flex;align-items:center;gap:5px;background:rgba(0,229,153,0.08);border:1px solid rgba(0,229,153,0.2);padding:4px 10px;border-radius:20px;font-size:10px;color:var(--green);font-family:'DM Mono',monospace;}
+.logo sub{font-size:11px;color:var(--sub);letter-spacing:0;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
 .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.4s infinite;}
-.upload-section{padding:16px 14px 0;}
-.upload-zone{border:2px dashed var(--border2);border-radius:14px;background:rgba(245,166,35,0.03);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;}
-.upload-zone:active,.upload-zone.drag{border-color:var(--amber);background:rgba(245,166,35,0.07);}
-.uz-icon{font-size:36px;margin-bottom:10px;}
-.uz-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:5px;}
-.uz-sub{font-size:12px;color:var(--sub);line-height:1.6;}
-.uz-hint{margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
-#previewGrid{display:none;margin-top:10px;flex-wrap:wrap;gap:6px;}
-#fileCount{display:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--cyan);margin-top:6px;text-align:center;}
-#clearBtn{display:none;width:100%;margin-top:5px;padding:7px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);cursor:pointer;}
-.analyze-btn{width:100%;margin-top:10px;padding:14px;background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(245,166,35,0.08));border:1px solid rgba(245,166,35,0.35);border-radius:10px;font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--amber);cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
-.analyze-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.live-badge{display:flex;align-items:center;gap:4px;background:rgba(0,229,153,0.08);border:1px solid rgba(0,229,153,0.2);padding:3px 9px;border-radius:20px;font-size:9px;color:var(--green);font-family:'DM Mono',monospace;}
+.fetch-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--sub);}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;height:var(--tab-h);background:rgba(13,16,23,0.97);border-top:1px solid var(--border);display:flex;z-index:100;backdrop-filter:blur(12px);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all 0.15s;position:relative;}
+.nav-item .ni{font-size:18px;}
+.nav-item .nl{font-size:9px;color:var(--muted);font-weight:500;}
+.nav-item.active .nl{color:var(--amber);}
+.nav-item.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--amber);border-radius:0 0 2px 2px;}
+
+/* PANELS */
+.panel{display:none;padding:14px 14px 0;}
+.panel.active{display:block;animation:fadeUp 0.25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* COMMON */
+.sec{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:16px 0 7px;display:flex;align-items:center;gap:8px;}
+.sec::before{content:'';width:3px;height:11px;background:var(--amber);border-radius:2px;flex-shrink:0;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;}
+.row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(26,32,53,0.6);font-size:12px;}
+.row:last-child{border-bottom:none;}
+.rl{color:var(--sub);}
+.rv{font-family:'DM Mono',monospace;font-weight:500;}
+.rv.amber{color:var(--amber);}
+.rv.green{color:var(--green);}
+.rv.red{color:var(--red);}
+.rv.cyan{color:var(--cyan);}
+.rv.purple{color:var(--purple);}
+.btn{padding:10px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;font-weight:500;letter-spacing:0.5px;border:none;transition:all 0.2s;}
+.btn-amber{background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);color:var(--amber);}
+.btn-amber:active{background:rgba(245,166,35,0.22);}
+.btn-cyan{background:rgba(0,201,224,0.1);border:1px solid rgba(0,201,224,0.25);color:var(--cyan);}
+.btn-full{width:100%;}
+.inp{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--text);outline:none;width:100%;}
+.inp:focus{border-color:var(--amber);}
+.inp::placeholder{color:var(--muted);}
+.tag{font-size:9px;padding:2px 7px;border-radius:3px;font-family:'DM Mono',monospace;font-weight:500;}
+.tag-green{background:rgba(0,229,153,0.1);color:var(--green);border:1px solid rgba(0,229,153,0.25);}
+.tag-red{background:rgba(255,69,96,0.1);color:var(--red);border:1px solid rgba(255,69,96,0.2);}
+.tag-amber{background:rgba(245,166,35,0.12);color:var(--amber);border:1px solid rgba(245,166,35,0.3);}
+.tag-cyan{background:rgba(0,201,224,0.1);color:var(--cyan);border:1px solid rgba(0,201,224,0.25);}
+.tag-muted{background:rgba(58,74,101,0.3);color:var(--muted);border:1px solid var(--border);}
 .loading-bar{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-top:6px;display:none;}
 .loading-bar.show{display:block;}
 .loading-bar-inner{height:100%;background:linear-gradient(90deg,var(--amber),var(--cyan),var(--amber));background-size:200%;animation:loadSlide 1.2s linear infinite;}
 @keyframes loadSlide{0%{background-position:200%}100%{background-position:-200%}}
-.sec-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:0 14px;margin:16px 0 7px;display:flex;align-items:center;gap:8px;}
-.sec-label::before{content:'';width:3px;height:12px;background:var(--amber);border-radius:2px;flex-shrink:0;}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.card{margin:0 14px 10px;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.err{background:rgba(255,69,96,0.07);border:1px solid rgba(255,69,96,0.2);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--red);display:none;margin-top:8px;}
+.err.show{display:block;}
+
+/* ── PANEL 1: 스캔 ── */
+.mode-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.mode-tab{flex:1;padding:8px;background:var(--s2);border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);cursor:pointer;text-align:center;letter-spacing:1px;}
+.mode-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(245,166,35,0.06);}
+.upload-zone{border:2px dashed var(--border2);border-radius:12px;background:rgba(245,166,35,0.02);padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.upload-zone:active,.upload-zone.drag{border-color:var(--amber);background:rgba(245,166,35,0.06);}
+.uz-icon{font-size:32px;margin-bottom:8px;}
+.uz-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.uz-sub{font-size:11px;color:var(--sub);line-height:1.6;}
+.uz-hint{margin-top:7px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);}
+#previewGrid{display:none;margin-top:8px;flex-wrap:wrap;gap:5px;}
+#fileCount{display:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--cyan);margin-top:5px;text-align:center;}
+#clearBtn{display:none;width:100%;margin-top:4px;padding:6px;background:transparent;border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);cursor:pointer;}
+.paste-area{width:100%;min-height:130px;background:var(--s2);border:1.5px dashed var(--border2);border-radius:10px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.7;resize:vertical;outline:none;}
+.paste-area:focus{border-color:var(--amber);}
+.paste-area::placeholder{color:var(--muted);}
+.analyze-btn{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,rgba(245,166,35,0.14),rgba(245,166,35,0.07));border:1px solid rgba(245,166,35,0.33);border-radius:10px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--amber);cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
+.analyze-btn:disabled{opacity:0.3;cursor:not-allowed;}
+
+/* 결과 영역 */
 .result-area{display:none;}
-.result-area.show{display:block;animation:fadeUp 0.4s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.hero{margin:12px 14px 0;border-radius:14px;overflow:hidden;background:var(--s2);border:1px solid var(--border2);padding:20px;position:relative;}
-.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,0.04) 1px,transparent 1px);background-size:28px 28px;}
+.result-area.show{display:block;animation:fadeUp 0.3s ease;}
+.hero{border-radius:14px;overflow:hidden;background:var(--s2);border:1px solid var(--border2);padding:18px;position:relative;margin-bottom:10px;}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,0.04) 1px,transparent 1px);background-size:26px 26px;}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;}
-.hl-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--sub);margin-bottom:6px;}
-.hl-title{font-size:15px;font-weight:700;color:var(--white);line-height:1.35;}
-.hl-obs{font-size:11px;color:var(--sub);margin-top:4px;}
-.temp-display{font-family:'Bebas Neue',cursive;font-size:68px;line-height:1;color:var(--amber);text-shadow:0 0 40px rgba(245,166,35,0.35);}
-.temp-unit{font-family:'DM Mono',monospace;font-size:12px;color:var(--amber2);text-align:right;margin-top:-4px;}
-.hero-divider{height:1px;background:var(--border);margin:14px 0;}
-.hero-stats{display:flex;}
-.hstat{flex:1;text-align:center;padding:0 6px;border-right:1px solid var(--border);}
+.hl-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--sub);margin-bottom:5px;}
+.hl-title{font-size:14px;font-weight:700;color:var(--white);line-height:1.3;}
+.hl-obs{font-size:10px;color:var(--sub);margin-top:3px;}
+.temp-big{font-family:'Bebas Neue',cursive;font-size:62px;line-height:1;color:var(--amber);text-shadow:0 0 30px rgba(245,166,35,0.3);}
+.temp-unit{font-family:'DM Mono',monospace;font-size:11px;color:var(--amber2);text-align:right;}
+.hero-stats{display:flex;border-top:1px solid var(--border);margin-top:12px;padding-top:12px;}
+.hstat{flex:1;text-align:center;border-right:1px solid var(--border);}
 .hstat:last-child{border-right:none;}
-.hs-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--sub);letter-spacing:1px;margin-bottom:4px;}
-.hs-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
-.hs-val.amber{color:var(--amber);}
-.hs-val.cyan{color:var(--cyan);}
-.hs-val.green{color:var(--green);}
-.chart-wrap{display:flex;align-items:flex-end;gap:4px;height:90px;margin-bottom:6px;}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:3px;}
-.bar-v{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;}
-.bar{width:100%;border-radius:3px 3px 0 0;transition:height 1s cubic-bezier(0.4,0,0.2,1);min-height:3px;}
-.bar.peak{background:linear-gradient(180deg,var(--amber),#c47d10);box-shadow:0 0 12px rgba(245,166,35,0.25);}
+.hs-l{font-family:'DM Mono',monospace;font-size:8px;color:var(--sub);margin-bottom:3px;letter-spacing:1px;}
+.hs-v{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+.chart-wrap{display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:5px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:2px;}
+.bar-v{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;}
+.bar{width:100%;border-radius:2px 2px 0 0;transition:height 1s cubic-bezier(0.4,0,0.2,1);}
+.bar.peak{background:linear-gradient(180deg,var(--amber),#c47d10);}
 .bar.high{background:linear-gradient(180deg,#e07b20,#a05010);}
 .bar.mid{background:linear-gradient(180deg,var(--blue),#2255aa);}
-.bar-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--sub);text-align:center;flex:1;}
-.wind-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:10px;scrollbar-width:none;}
+.bar-lbl{font-family:'DM Mono',monospace;font-size:7px;color:var(--sub);text-align:center;flex:1;}
+.wind-scroll{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;margin-top:8px;scrollbar-width:none;}
 .wind-scroll::-webkit-scrollbar{display:none;}
-.wchip{flex:0 0 auto;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;text-align:center;min-width:56px;}
+.wchip{flex:0 0 auto;background:var(--s2);border:1px solid var(--border2);border-radius:7px;padding:6px 8px;text-align:center;min-width:52px;}
 .wchip .wt{font-size:8px;color:var(--sub);font-family:'DM Mono',monospace;}
-.wchip .wd{font-size:10px;color:var(--cyan);font-weight:700;margin:2px 0;}
-.wchip .ws{font-size:9px;color:var(--blue);font-family:'DM Mono',monospace;}
-.wchip .wh{font-size:9px;color:var(--amber2);}
-.factor-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px 10px;}
-.factor-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px;}
-.factor-card h4{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--sub);margin-bottom:9px;text-transform:uppercase;}
-.frow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(26,32,53,0.8);font-size:11px;}
+.wchip .wd{font-size:10px;color:var(--cyan);font-weight:700;margin:1px 0;}
+.wchip .ws{font-size:8px;color:var(--blue);font-family:'DM Mono',monospace;}
+.wchip .wh{font-size:8px;color:var(--amber2);}
+.factor-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.factor-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:11px;}
+.factor-card h4{font-family:'DM Mono',monospace;font-size:9px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;}
+.frow{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(26,32,53,0.7);font-size:10px;}
 .frow:last-child{border-bottom:none;}
 .fl{color:var(--sub);}
-.fv{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;}
+.fv{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;}
 .fv.up{color:var(--amber);}
 .fv.dn{color:var(--cyan);}
-.fv.na{color:var(--muted);}
-.verdict{margin:0 14px 10px;background:var(--s1);border:1px solid rgba(245,166,35,0.22);border-radius:14px;padding:20px 16px;text-align:center;position:relative;overflow:hidden;}
-.verdict::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:120px;background:radial-gradient(ellipse,rgba(245,166,35,0.07) 0%,transparent 70%);}
-.vd-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--sub);margin-bottom:8px;}
-.vd-temp{font-family:'Bebas Neue',cursive;font-size:76px;color:var(--amber);line-height:1;text-shadow:0 0 40px rgba(245,166,35,0.38);}
-.vd-range{font-family:'DM Mono',monospace;font-size:11px;color:var(--sub);margin-top:4px;}
-.vd-conf{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:rgba(0,229,153,0.08);border:1px solid rgba(0,229,153,0.2);padding:6px 16px;border-radius:20px;font-size:12px;color:var(--green);font-weight:700;}
-.ai-text{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;}
-.pm-row{display:flex;gap:8px;margin-bottom:8px;}
-.pm-label{font-size:12px;color:var(--sub);min-width:52px;padding-top:8px;}
-.pm-input{flex:1;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:13px;color:var(--amber);text-align:center;}
-.pm-input:focus{outline:none;border-color:var(--amber);}
-.pm-calc-btn{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);cursor:pointer;}
-.pm-result{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:6px;display:none;}
+.verdict{background:var(--s1);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:18px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden;}
+.verdict::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:180px;height:100px;background:radial-gradient(ellipse,rgba(245,166,35,0.06) 0%,transparent 70%);}
+.vd-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--sub);margin-bottom:6px;}
+.vd-temp{font-family:'Bebas Neue',cursive;font-size:68px;color:var(--amber);line-height:1;text-shadow:0 0 30px rgba(245,166,35,0.35);}
+.vd-range{font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);margin-top:3px;}
+.vd-conf{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(0,229,153,0.07);border:1px solid rgba(0,229,153,0.18);padding:5px 14px;border-radius:20px;font-size:11px;color:var(--green);font-weight:700;}
+
+/* ── PANEL 2: 예보 (Open-Meteo) ── */
+.city-sel{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.city-btn{padding:5px 10px;border-radius:6px;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;background:var(--s2);border:1px solid var(--border);color:var(--sub);}
+.city-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,201,224,0.07);}
+.forecast-table{width:100%;border-collapse:collapse;}
+.forecast-table th{font-family:'DM Mono',monospace;font-size:9px;color:var(--sub);padding:4px 6px;text-align:center;letter-spacing:1px;}
+.forecast-table td{font-family:'DM Mono',monospace;font-size:11px;padding:6px;text-align:center;border-bottom:1px solid var(--border);}
+.forecast-table tr:last-child td{border-bottom:none;}
+.temp-cell{font-weight:500;}
+.temp-cell.peak{color:var(--amber);}
+.temp-cell.high{color:#e07b20;}
+.temp-cell.mid{color:var(--blue);}
+.revision-badge{display:inline-block;font-size:8px;padding:1px 5px;border-radius:3px;margin-left:4px;font-family:'DM Mono',monospace;}
+.rev-up{background:rgba(255,69,96,0.12);color:var(--red);}
+.rev-dn{background:rgba(0,201,224,0.1);color:var(--cyan);}
+
+/* ── PANEL 3: 마르코프 ── */
+.markov-meter{position:relative;height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:8px 0;}
+.markov-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+.threshold-line{position:absolute;top:0;bottom:0;width:2px;background:var(--amber);border-radius:1px;}
+.signal-box{border-radius:10px;padding:14px;text-align:center;margin-bottom:10px;}
+.signal-box.enter{background:rgba(0,229,153,0.07);border:1px solid rgba(0,229,153,0.2);}
+.signal-box.wait{background:rgba(255,69,96,0.07);border:1px solid rgba(255,69,96,0.2);}
+.signal-box.neutral{background:rgba(58,74,101,0.2);border:1px solid var(--border);}
+.signal-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--sub);margin-bottom:5px;}
+.signal-val{font-family:'Bebas Neue',cursive;font-size:40px;line-height:1;}
+.signal-sub{font-size:11px;color:var(--sub);margin-top:4px;}
+.revision-list{display:flex;flex-direction:column;gap:6px;}
+.rev-item{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;}
+.rev-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);}
+.rev-change{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
+.rev-note{font-size:10px;color:var(--sub);}
+
+/* ── PANEL 4: 베팅 ── */
+.kelly-result{background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(0,201,224,0.05));border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:14px;margin-top:8px;display:none;}
+.kelly-result.show{display:block;}
+.kelly-big{font-family:'Bebas Neue',cursive;font-size:48px;color:var(--purple);line-height:1;text-align:center;}
+.kelly-sub{font-size:11px;color:var(--sub);text-align:center;margin-top:3px;}
+.pm-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.pm-label{font-size:11px;color:var(--sub);min-width:56px;}
+.pm-result{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:11px;margin-top:8px;display:none;}
 .pm-result.show{display:block;}
 .pm-line{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);padding:3px 0;}
 .pm-line .pv{font-family:'DM Mono',monospace;color:var(--text);font-weight:500;}
-.pm-line.total{border-top:1px solid var(--border);margin-top:6px;padding-top:8px;}
-.pm-line.total .pv{color:var(--green);font-size:15px;}
-/* MODE TABS */
-.mode-tabs{display:flex;gap:6px;margin-bottom:10px;}
-.mode-tab{flex:1;padding:9px;background:var(--s2);border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--sub);cursor:pointer;text-align:center;letter-spacing:1px;}
-.mode-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(245,166,35,0.07);}
-/* TEXT INPUT */
-.text-zone{display:none;}
-.text-zone.show{display:block;}
-.img-zone{display:block;}
-.img-zone.hide{display:none;}
-.paste-area{width:100%;min-height:140px;background:var(--s2);border:1.5px dashed var(--border2);border-radius:12px;padding:14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.7;resize:vertical;outline:none;}
-.paste-area:focus{border-color:var(--amber);}
-.paste-area::placeholder{color:var(--muted);}
-.paste-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:6px;text-align:center;}
-.footer{text-align:center;padding:20px 16px 32px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;line-height:1.8;}
-.error-box{margin:10px 14px;background:rgba(255,69,96,0.08);border:1px solid rgba(255,69,96,0.25);border-radius:10px;padding:14px;font-size:12px;color:var(--red);display:none;}
-.error-box.show{display:block;}
+.pm-line.total{border-top:1px solid var(--border);margin-top:6px;padding-top:7px;}
+.pm-line.total .pv{color:var(--green);font-size:14px;}
+
+/* API KEY */
+.apikey-card{background:var(--s2);border:1px solid rgba(245,166,35,0.15);border-radius:10px;padding:12px;margin-bottom:10px;}
+.apikey-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--amber);margin-bottom:8px;}
+.apikey-row{display:flex;gap:6px;}
+.apikey-inp{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:7px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);outline:none;}
+.apikey-inp:focus{border-color:var(--amber);}
+.apikey-status{font-family:'DM Mono',monospace;font-size:9px;color:var(--sub);margin-top:5px;}
+.apikey-status.ok{color:var(--green);}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo">WEATHER<span>EDGE</span></div>
-  <div class="live-badge"><span class="live-dot"></span>AI POWERED</div>
+  <div class="logo">WEATHER<span>EDGE</span><sub> v3</sub></div>
+  <div class="topbar-right">
+    <span class="fetch-time" id="fetchTime">—</span>
+    <div class="live-badge"><span class="live-dot"></span>AI</div>
+  </div>
 </div>
 
-<div class="upload-section">
+<!-- ══════════ PANEL 1: 스캔 ══════════ -->
+<div class="panel active" id="panel-scan">
+
+  <!-- API KEY -->
+  <div class="apikey-card">
+    <div class="apikey-label">🔑 ANTHROPIC API KEY</div>
+    <div class="apikey-row">
+      <input type="password" id="keyInp" class="apikey-inp" placeholder="sk-ant-api03-..." autocomplete="off">
+      <button onclick="saveKey()" class="btn btn-amber">저장</button>
+    </div>
+    <div class="apikey-status" id="keyStatus">키를 입력하세요</div>
+  </div>
 
   <!-- MODE TABS -->
   <div class="mode-tabs">
     <button class="mode-tab active" id="tabImg" onclick="switchMode('img')">📸 스크린샷</button>
-    <button class="mode-tab" id="tabTxt" onclick="switchMode('txt')">📋 텍스트 붙여넣기</button>
+    <button class="mode-tab" id="tabTxt" onclick="switchMode('txt')">📋 텍스트</button>
   </div>
 
   <!-- IMAGE MODE -->
-  <div class="img-zone" id="imgZone">
+  <div id="imgZone">
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
       <div class="uz-icon">📸</div>
       <div class="uz-title">날씨 스크린샷 업로드</div>
-      <div class="uz-sub">기상청 날씨누리 · KMA 앱<br>여러 장 동시 선택 가능 (최대 5장)</div>
-      <div class="uz-hint">// TAP TO UPLOAD · MULTIPLE FILES SUPPORTED</div>
+      <div class="uz-sub">기상청 날씨누리 · KMA 앱<br>여러 장 동시 선택 (최대 5장)</div>
+      <div class="uz-hint">// TAP TO UPLOAD · MULTIPLE FILES OK</div>
     </div>
     <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this)">
     <div id="previewGrid"></div>
@@ -147,126 +248,278 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   </div>
 
   <!-- TEXT MODE -->
-  <div class="text-zone" id="txtZone">
+  <div id="txtZone" style="display:none;">
     <textarea class="paste-area" id="pasteArea"
-      placeholder="여기에 날씨 데이터를 붙여넣기 하세요&#10;&#10;예시:&#10;10일(일) 최고 21°C&#10;12시 21°C 남풍 5m/s 습도 65%&#10;13시 21°C 남풍 5m/s&#10;강수확률 0%&#10;..."></textarea>
-    <div class="paste-hint">// KMA 날씨누리 · 기상청 앱 · 해양기상포털 텍스트 모두 가능</div>
+      placeholder="날씨 데이터 붙여넣기&#10;&#10;예시:&#10;11일(월) 최저 12°C 최고 19°C&#10;강수확률 60%&#10;남풍 약간강 4m/s&#10;12시 15°C 습도 70%..."></textarea>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;margin-top:5px;">// KMA · 네이버 · 해양기상포털 텍스트 모두 가능</div>
   </div>
 
-  <button class="analyze-btn" id="analyzeBtn" onclick="analyzeImages()" disabled>
-    ⚡ AI 분석 시작
-  </button>
-  <div class="loading-bar" id="loadingBar">
-    <div class="loading-bar-inner"></div>
+  <button class="analyze-btn" id="analyzeBtn" onclick="analyzeImages()" disabled>⚡ AI 분석 시작</button>
+  <div class="loading-bar" id="loadingBar"><div class="loading-bar-inner"></div></div>
+  <div class="err" id="errBox"></div>
+
+  <!-- 결과 -->
+  <div class="result-area" id="resultArea">
+    <div class="sec">분석 결과</div>
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hl-tag">KMA · 인천공항 관측소</div>
+          <div class="hl-title" id="heroTitle">—</div>
+          <div class="hl-obs" id="heroObs">—</div>
+        </div>
+        <div style="text-align:right">
+          <div class="temp-big" id="heroTemp">—</div>
+          <div class="temp-unit">°C PRED</div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hs-l">WIND</div><div class="hs-v" style="color:var(--cyan)" id="sWind">—</div></div>
+        <div class="hstat"><div class="hs-l">RAIN</div><div class="hs-v" style="color:var(--green)" id="sRain">—</div></div>
+        <div class="hstat"><div class="hs-l">HUMID</div><div class="hs-v" style="color:var(--amber)" id="sHumid">—</div></div>
+        <div class="hstat"><div class="hs-l">CONF</div><div class="hs-v" style="color:var(--green)" id="sConf">—</div></div>
+      </div>
+    </div>
+
+    <div class="sec">시간별 기온</div>
+    <div class="card">
+      <div class="chart-wrap" id="chartBars"></div>
+      <div id="chartLabels" style="display:flex;gap:3px;"></div>
+      <div class="wind-scroll" id="windScroll"></div>
+    </div>
+
+    <div class="sec">기상 요인</div>
+    <div class="factor-grid">
+      <div class="factor-card"><h4>▲ 상승</h4><div id="upFactors"></div></div>
+      <div class="factor-card"><h4>▼ 억제</h4><div id="downFactors"></div></div>
+    </div>
+
+    <div class="sec">최종 예측</div>
+    <div class="verdict">
+      <div class="vd-label">FINAL PREDICTED HIGH</div>
+      <div class="vd-temp" id="verdictTemp">—</div>
+      <div class="vd-range" id="verdictRange">—</div>
+      <div class="vd-conf" id="verdictConf">—</div>
+    </div>
+
+    <div class="sec">AI 분석</div>
+    <div class="card" style="font-size:12px;line-height:1.8;color:var(--text);" id="aiText"></div>
   </div>
-  <div class="error-box" id="errorBox"></div>
 </div>
 
-<div class="result-area" id="resultArea">
-  <div class="hero">
-    <div class="hero-top">
-      <div>
-        <div class="hl-tag">KMA · 인천공항 관측소</div>
-        <div class="hl-title" id="heroTitle">분석 결과</div>
-        <div class="hl-obs" id="heroObs">—</div>
+<!-- ══════════ PANEL 2: 예보 (Open-Meteo) ══════════ -->
+<div class="panel" id="panel-forecast">
+
+  <div class="sec">자동 예보 조회</div>
+
+  <!-- 도시 선택 -->
+  <div class="city-sel" id="citySel">
+    <button class="city-btn active" onclick="selectCity(this,'인천공항',37.46,126.44)">✈️ 인천공항</button>
+    <button class="city-btn" onclick="selectCity(this,'제주',33.51,126.53)">🍊 제주</button>
+  </div>
+
+  <button class="btn btn-cyan btn-full" id="fetchBtn" onclick="fetchForecast()">🌐 Open-Meteo 예보 가져오기</button>
+  <div class="loading-bar" id="fetchBar"><div class="loading-bar-inner"></div></div>
+  <div class="err" id="fetchErr"></div>
+
+  <div id="forecastResult" style="display:none;">
+    <div class="sec">오늘/내일 예보</div>
+    <div class="card">
+      <table class="forecast-table" id="forecastTable">
+        <thead><tr>
+          <th>시각</th><th>기온(°C)</th><th>강수(%)</th><th>바람</th><th>습도</th>
+        </tr></thead>
+        <tbody id="forecastBody"></tbody>
+      </table>
+    </div>
+
+    <div class="sec">예보 변화 감지</div>
+    <div class="card" id="revisionCard">
+      <div style="font-size:12px;color:var(--sub);">이전 스냅샷 없음 — 다음 실행 시 비교 가능</div>
+    </div>
+
+    <div class="sec">정산 소스 확인</div>
+    <div class="card">
+      <div class="row"><span class="rl">정산 기준</span><span class="rv amber">KMA 인천공항 실측</span></div>
+      <div class="row"><span class="rl">해양기상포털</span><span class="rv cyan">marine.kma.go.kr</span></div>
+      <div class="row"><span class="rl">날씨누리</span><span class="rv cyan">weather.go.kr</span></div>
+      <div class="row"><span class="rl">정산 단위</span><span class="rv green">정수 °C (반올림)</span></div>
+      <div class="row"><span class="rl">최고기온 시각</span><span class="rv amber" id="peakHour">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PANEL 3: 마르코프 ══════════ -->
+<div class="panel" id="panel-markov">
+
+  <div class="sec">Markov State Filter</div>
+
+  <div class="card">
+    <div class="row"><span class="rl">시장가 (Market Price)</span>
+      <input type="number" id="mktPrice" class="inp" style="width:80px;padding:4px 8px;font-size:12px;" placeholder="34" step="1" oninput="calcMarkov()">
+      <span style="font-size:11px;color:var(--sub);padding-left:4px;">¢</span>
+    </div>
+    <div class="row"><span class="rl">모델 확률 (Model Prob)</span>
+      <input type="number" id="modelProb" class="inp" style="width:80px;padding:4px 8px;font-size:12px;" placeholder="55" step="1" oninput="calcMarkov()">
+      <span style="font-size:11px;color:var(--sub);padding-left:4px;">%</span>
+    </div>
+    <div class="row"><span class="rl">State Persistence</span>
+      <input type="number" id="statePersist" class="inp" style="width:80px;padding:4px 8px;font-size:12px;" placeholder="87" step="1" oninput="calcMarkov()">
+      <span style="font-size:11px;color:var(--sub);padding-left:4px;">%</span>
+    </div>
+  </div>
+
+  <!-- GAP METER -->
+  <div class="sec">갭 분석 (Gap δ)</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+      <span style="font-size:11px;color:var(--sub);">Arbitrage Gap</span>
+      <span class="rv amber" id="gapVal">—</span>
+    </div>
+    <div class="markov-meter">
+      <div class="markov-fill" id="gapFill" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--amber));"></div>
+      <div class="threshold-line" style="left:33%;"></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:right;">▲ 5% 임계값</div>
+
+    <div style="margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:11px;color:var(--sub);">Persistence p(j*,j*)</span>
+        <span class="rv purple" id="persistVal">—</span>
       </div>
-      <div style="text-align:right">
-        <div class="temp-display" id="heroTemp">—</div>
-        <div class="temp-unit">°C PREDICTED</div>
+      <div class="markov-meter">
+        <div class="markov-fill" id="persistFill" style="width:0%;background:linear-gradient(90deg,var(--muted),var(--purple));"></div>
+        <div class="threshold-line" style="left:87%;"></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:right;">▲ 87% 임계값</div>
+    </div>
+  </div>
+
+  <!-- SIGNAL -->
+  <div class="signal-box neutral" id="signalBox">
+    <div class="signal-label">ENTRY SIGNAL</div>
+    <div class="signal-val" id="signalVal" style="color:var(--muted);">—</div>
+    <div class="signal-sub" id="signalSub">갭과 지속성을 입력하세요</div>
+  </div>
+
+  <!-- 예보 변화 로그 -->
+  <div class="sec">예보 변화 로그</div>
+  <div class="card">
+    <div class="revision-list" id="revisionLog">
+      <div style="font-size:12px;color:var(--sub);text-align:center;padding:10px 0;">
+        예보 데이터를 조회하면 자동으로 기록됩니다
       </div>
     </div>
-    <div class="hero-divider"></div>
-    <div class="hero-stats">
-      <div class="hstat"><div class="hs-lbl">WIND</div><div class="hs-val cyan" id="statWind">—</div></div>
-      <div class="hstat"><div class="hs-lbl">RAIN</div><div class="hs-val green" id="statRain">—</div></div>
-      <div class="hstat"><div class="hs-lbl">HUMID</div><div class="hs-val amber" id="statHumid">—</div></div>
-      <div class="hstat"><div class="hs-lbl">CONF</div><div class="hs-val green" id="statConf">—</div></div>
+  </div>
+
+  <div class="sec">핵심 원리</div>
+  <div class="card">
+    <div class="row"><span class="rl">진입 조건 ①</span><span class="rv amber">Gap ≥ 5%</span></div>
+    <div class="row"><span class="rl">진입 조건 ②</span><span class="rv purple">Persist ≥ 87%</span></div>
+    <div class="row"><span class="rl">두 조건 모두</span><span class="tag tag-green">ENTER</span></div>
+    <div class="row"><span class="rl">하나라도 미달</span><span class="tag tag-muted">WAIT</span></div>
+    <div class="row"><span class="rl">Kelly f*</span><span class="rv cyan">≈ 0.71</span></div>
+  </div>
+</div>
+
+<!-- ══════════ PANEL 4: 베팅 ══════════ -->
+<div class="panel" id="panel-bet">
+
+  <div class="sec">Kelly Criterion</div>
+  <div class="card">
+    <div class="pm-row">
+      <span class="pm-label">승리 확률</span>
+      <input class="inp" type="number" id="winProb" placeholder="55" style="text-align:center;" oninput="calcKelly()">
+      <span style="font-size:11px;color:var(--sub);">%</span>
+    </div>
+    <div class="pm-row">
+      <span class="pm-label">배당률</span>
+      <input class="inp" type="number" id="odds" placeholder="2.94" step="0.01" style="text-align:center;" oninput="calcKelly()">
+      <span style="font-size:11px;color:var(--sub);">배</span>
+    </div>
+    <div class="pm-row">
+      <span class="pm-label">총 자본</span>
+      <input class="inp" type="number" id="bankroll" placeholder="500" style="text-align:center;" oninput="calcKelly()">
+      <span style="font-size:11px;color:var(--sub);">$</span>
+    </div>
+    <div class="kelly-result" id="kellyResult">
+      <div class="kelly-big" id="kellyPct">—</div>
+      <div class="kelly-sub" id="kellySub">—</div>
+      <div style="margin-top:10px;">
+        <div class="row"><span class="rl">Full Kelly</span><span class="rv purple" id="kellyFull">—</span></div>
+        <div class="row"><span class="rl">Half Kelly (권장)</span><span class="rv green" id="kellyHalf">—</span></div>
+        <div class="row"><span class="rl">Quarter Kelly</span><span class="rv cyan" id="kellyQuarter">—</span></div>
+        <div class="row"><span class="rl">EV</span><span class="rv amber" id="kellyEV">—</span></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec-label">시간별 기온</div>
-  <div class="card">
-    <div class="chart-wrap" id="chartBars"></div>
-    <div id="chartLabels" style="display:flex;gap:4px;"></div>
-    <div class="wind-scroll" id="windScroll"></div>
-  </div>
-
-  <div class="sec-label">AI 종합 분석</div>
-  <div class="card">
-    <div class="ai-text" id="aiAnalysisText"></div>
-  </div>
-
-  <div class="sec-label">기상 요인</div>
-  <div class="factor-grid">
-    <div class="factor-card"><h4>▲ 상승 요인</h4><div id="upFactors"></div></div>
-    <div class="factor-card"><h4>▼ 억제 요인</h4><div id="downFactors"></div></div>
-  </div>
-
-  <div class="sec-label">최종 예측</div>
-  <div class="verdict">
-    <div class="vd-label">FINAL PREDICTED HIGH TEMPERATURE</div>
-    <div class="vd-temp" id="verdictTemp">—</div>
-    <div class="vd-range" id="verdictRange">—</div>
-    <div class="vd-conf" id="verdictConf">분석 중...</div>
-  </div>
-
-  <div class="sec-label">Polymarket 배팅 계산기</div>
+  <div class="sec">수익 계산기</div>
   <div class="card">
     <div class="pm-row">
       <span class="pm-label">매수가</span>
-      <input class="pm-input" type="number" id="pmPrice" placeholder="예: 34" step="0.1">
-      <span style="padding-top:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--sub)">¢</span>
+      <input class="inp" type="number" id="pmPrice" placeholder="34" step="0.1" style="text-align:center;">
+      <span style="font-size:11px;color:var(--sub);">¢</span>
     </div>
     <div class="pm-row">
       <span class="pm-label">배팅액</span>
-      <input class="pm-input" type="number" id="pmAmount" placeholder="$" value="100">
-      <span style="padding-top:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--sub)">$</span>
+      <input class="inp" type="number" id="pmAmount" placeholder="100" style="text-align:center;" value="100">
+      <span style="font-size:11px;color:var(--sub);">$</span>
     </div>
-    <button class="pm-calc-btn" style="width:100%;margin-top:4px;" onclick="calcPM()">⚡ 수익 계산</button>
+    <button class="btn btn-amber btn-full" onclick="calcPM()" style="margin-top:4px;">⚡ 수익 계산</button>
     <div class="pm-result" id="pmResult"></div>
   </div>
-</div>
 
-<div class="empty-state" id="emptyState">
-  <div class="es-icon">🌤️</div>
-  <div class="es-text">기상청 날씨누리 스크린샷을<br>업로드하면 AI가 자동으로<br>최고기온을 분석합니다</div>
-</div>
-
-<!-- API KEY (POLYMASTER 공유) -->
-<div style="margin:0 14px 16px;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px;">
-  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--amber);margin-bottom:10px;">🔑 ANTHROPIC API KEY</div>
-  <div style="display:flex;gap:8px;margin-bottom:6px;">
-    <input type="password" id="keyInp" placeholder="sk-ant-api03-..." autocomplete="off"
-      style="flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);outline:none;">
-    <button onclick="saveKey()" style="background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:8px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);cursor:pointer;">저장</button>
+  <div class="sec">정산 시나리오</div>
+  <div class="card" id="scenCard">
+    <div style="font-size:12px;color:var(--sub);text-align:center;padding:8px 0;">
+      위에서 계산하면 자동으로 표시됩니다
+    </div>
   </div>
-  <div id="keyStatus" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--sub);">키를 입력하세요 (POLYMASTER와 공유됩니다)</div>
+
+  <div class="sec">오늘 복기</div>
+  <div class="card">
+    <div class="row"><span class="rl">5/10 예보</span><span class="rv amber">21°C</span></div>
+    <div class="row"><span class="rl">5/10 실측</span><span class="rv red">22°C</span></div>
+    <div class="row"><span class="rl">정산</span><span class="tag tag-green">22°C+ 100%</span></div>
+    <div class="row"><span class="rl">오차 원인</span><span class="rv cyan">남풍+맑음 → 예보값 그대로</span></div>
+    <div class="row"><span class="rl">보정 교훈</span><span class="rv green">해풍 없으면 -1°C 불필요</span></div>
+  </div>
 </div>
 
-<div class="footer">WEATHEREDGE · CLAUDE AI POWERED<br>KMA 인천공항 관측소 기준 · 투자 조언 아님</div>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="switchPanel('scan',this)">
+    <span class="ni">📸</span><span class="nl">스캔</span>
+  </div>
+  <div class="nav-item" onclick="switchPanel('forecast',this)">
+    <span class="ni">🌐</span><span class="nl">예보</span>
+  </div>
+  <div class="nav-item" onclick="switchPanel('markov',this)">
+    <span class="ni">📊</span><span class="nl">마르코프</span>
+  </div>
+  <div class="nav-item" onclick="switchPanel('bet',this)">
+    <span class="ni">💰</span><span class="nl">베팅</span>
+  </div>
+</nav>
 
 <script>
+// ── STATE ──
 let imageFiles = [];
 let currentMode = 'img';
+let currentCity = {name:'인천공항', lat:37.46, lon:126.44};
+let forecastSnapshot = null;
+let revisionHistory = JSON.parse(localStorage.getItem('we_revisions') || '[]');
 
-// ── 모드 전환 ──
-function switchMode(mode) {
-  currentMode = mode;
-  document.getElementById('tabImg').classList.toggle('active', mode==='img');
-  document.getElementById('tabTxt').classList.toggle('active', mode==='txt');
-  document.getElementById('imgZone').classList.toggle('hide', mode==='txt');
-  document.getElementById('txtZone').classList.toggle('show', mode==='txt');
-  if (mode==='txt') {
-    const ta = document.getElementById('pasteArea');
-    ta.oninput = () => { document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10; };
-    document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10;
-    document.getElementById('emptyState').style.display='none';
-  } else {
-    document.getElementById('analyzeBtn').disabled = imageFiles.length===0;
-  }
+// ── NAV ──
+function switchPanel(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
 }
 
-// ── API KEY (POLYMASTER와 동일한 localStorage 키) ──
+// ── API KEY ──
 function saveKey() {
   const k = document.getElementById('keyInp').value.trim();
   if (!k.startsWith('sk-ant-')) {
@@ -274,37 +527,53 @@ function saveKey() {
     return;
   }
   localStorage.setItem('pm-apikey', k);
-  document.getElementById('keyStatus').textContent = '✅ 저장 완료 · POLYMASTER와 공유됨';
-  document.getElementById('keyStatus').style.color = 'var(--green)';
-  document.getElementById('keyInp').value = '••••••••••••••••';
+  document.getElementById('keyStatus').textContent = '✅ 저장 완료';
+  document.getElementById('keyStatus').className = 'apikey-status ok';
+  document.getElementById('keyInp').value = '••••••••••';
 }
 
 window.addEventListener('load', () => {
   const k = localStorage.getItem('pm-apikey');
   if (k) {
-    document.getElementById('keyStatus').textContent = '✅ API 키 저장됨 · 분석 준비 완료';
-    document.getElementById('keyStatus').style.color = 'var(--green)';
+    document.getElementById('keyStatus').textContent = '✅ API 키 저장됨';
+    document.getElementById('keyStatus').className = 'apikey-status ok';
     document.getElementById('keyInp').placeholder = '저장된 키 있음';
   }
+  document.getElementById('fetchTime').textContent = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  renderRevisionLog();
 });
 
-// ── 파일 핸들러 ──
+// ── MODE SWITCH ──
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabImg').classList.toggle('active', mode==='img');
+  document.getElementById('tabTxt').classList.toggle('active', mode==='txt');
+  document.getElementById('imgZone').style.display = mode==='img' ? 'block' : 'none';
+  document.getElementById('txtZone').style.display = mode==='txt' ? 'block' : 'none';
+  if (mode==='txt') {
+    const ta = document.getElementById('pasteArea');
+    ta.oninput = () => { document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10; };
+    document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10;
+  } else {
+    document.getElementById('analyzeBtn').disabled = imageFiles.length === 0;
+  }
+}
+
+// ── FILE HANDLING ──
 function handleFiles(input) {
   const files = Array.from(input.files).slice(0, 5);
   if (!files.length) return;
   imageFiles = [];
-
   const grid = document.getElementById('previewGrid');
   const countEl = document.getElementById('fileCount');
   const clearBtn = document.getElementById('clearBtn');
   grid.innerHTML = '';
   grid.style.display = 'flex';
   grid.style.flexWrap = 'wrap';
-  grid.style.gap = '6px';
+  grid.style.gap = '5px';
   countEl.style.display = 'block';
   clearBtn.style.display = 'block';
-  countEl.textContent = `// ${files.length}장 선택 · AI 종합 분석 준비`;
-
+  countEl.textContent = `// ${files.length}장 선택됨`;
   let loaded = 0;
   files.forEach((file, idx) => {
     const reader = new FileReader();
@@ -316,15 +585,14 @@ function handleFiles(input) {
       wrap.style.cssText = 'position:relative;flex:0 0 calc(33% - 4px);';
       const img = document.createElement('img');
       img.src = result;
-      img.style.cssText = 'width:100%;height:80px;object-fit:cover;border-radius:8px;border:1px solid #222d45;display:block;';
+      img.style.cssText = 'width:100%;height:75px;object-fit:cover;border-radius:7px;border:1px solid #222d45;display:block;';
       const lbl = document.createElement('div');
-      lbl.style.cssText = 'position:absolute;bottom:4px;left:4px;background:rgba(7,8,13,0.85);color:#00c9e0;font-family:"DM Mono",monospace;font-size:8px;padding:2px 5px;border-radius:3px;';
+      lbl.style.cssText = 'position:absolute;bottom:3px;left:3px;background:rgba(7,8,13,0.85);color:#00c9e0;font-family:"DM Mono",monospace;font-size:8px;padding:1px 4px;border-radius:2px;';
       lbl.textContent = `${idx+1}/${files.length}`;
       wrap.appendChild(img); wrap.appendChild(lbl);
       grid.appendChild(wrap);
       if (loaded === files.length) {
         document.getElementById('analyzeBtn').disabled = false;
-        document.getElementById('emptyState').style.display = 'none';
       }
     };
     reader.readAsDataURL(file);
@@ -340,11 +608,10 @@ function clearFiles() {
   document.getElementById('analyzeBtn').disabled = true;
   document.getElementById('fileInput').value = '';
   document.getElementById('resultArea').classList.remove('show');
-  document.getElementById('emptyState').style.display = 'block';
-  document.getElementById('errorBox').classList.remove('show');
+  document.getElementById('errBox').classList.remove('show');
 }
 
-// 드래그 앤 드롭
+// Drag & drop
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
@@ -355,25 +622,18 @@ zone.addEventListener('drop', e => {
   if (dt.files.length) { document.getElementById('fileInput').files = dt.files; handleFiles(document.getElementById('fileInput')); }
 });
 
-// ── AI 분석 (이미지 + 텍스트 모드) ──
+// ── AI ANALYSIS ──
 async function analyzeImages() {
   const btn = document.getElementById('analyzeBtn');
   const bar = document.getElementById('loadingBar');
-  const errBox = document.getElementById('errorBox');
-  btn.disabled = true;
-  bar.classList.add('show');
-  errBox.classList.remove('show');
+  const errBox = document.getElementById('errBox');
+  btn.disabled = true; bar.classList.add('show'); errBox.classList.remove('show');
 
   const apiKey = localStorage.getItem('pm-apikey');
-  if (!apiKey) {
-    errBox.textContent = '❌ API 키 없음 — 아래에서 입력하세요';
-    errBox.classList.add('show');
-    btn.disabled = false; bar.classList.remove('show'); return;
-  }
+  if (!apiKey) { showErr(errBox,'API 키 없음 — 위에서 입력하세요'); btn.disabled=false; bar.classList.remove('show'); return; }
 
-  const basePrompt = `당신은 Polymarket 기온 예측 전문 분석가입니다. 날씨 데이터를 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
-{"date":"날짜","location":"인천공항","kma_max":21,"predicted_max":21,"predicted_range":"20~21","confidence":"HIGH","hourly":[{"hour":"12시","temp":21,"type":"peak"}],"wind":[{"hour":"12시","dir":"남풍","speed":"5m/s","humid":"65%"}],"wind_summary":"남풍 5m/s","rain_prob":"0%","humidity":"65%","up_factors":[{"label":"🌬️ 남풍","val":"+1°C"}],"down_factors":[{"label":"☁️ 구름","val":"-0.5°"}],"analysis":"종합 분석","verdict_reason":"판단 근거"}
-실제 데이터를 정확히 읽어서 JSON을 채워주세요.`;
+  const prompt = `Polymarket 기온 예측 분석가입니다. 날씨 데이터를 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
+{"date":"날짜","location":"인천공항","kma_max":21,"predicted_max":21,"predicted_range":"20~21","confidence":"HIGH","hourly":[{"hour":"12시","temp":21,"type":"peak"}],"wind":[{"hour":"12시","dir":"남풍","speed":"5m/s","humid":"65%"}],"wind_summary":"남풍 5m/s","rain_prob":"0%","humidity":"65%","up_factors":[{"label":"🌬️ 남풍","val":"+1°C"}],"down_factors":[{"label":"☁️ 구름","val":"-0.5°"}],"analysis":"종합 분석","verdict_reason":"판단 근거"}`;
 
   try {
     let content;
@@ -381,18 +641,18 @@ async function analyzeImages() {
       btn.textContent = '⏳ 텍스트 분석 중...';
       const txt = document.getElementById('pasteArea').value.trim();
       if (!txt) throw new Error('텍스트를 입력해주세요');
-      content = [{ type:'text', text: basePrompt + '\n\n[날씨 데이터]\n' + txt }];
+      content = [{ type:'text', text: prompt + '\n\n[날씨 데이터]\n' + txt }];
     } else {
       if (!imageFiles.length) throw new Error('이미지를 먼저 업로드하세요');
       btn.textContent = `⏳ ${imageFiles.length}장 분석 중...`;
       content = imageFiles.map(f => ({ type:'image', source:{type:'base64',media_type:f.type,data:f.base64} }));
-      content.push({ type:'text', text: basePrompt });
+      content.push({ type:'text', text: prompt });
     }
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content}] })
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1200, messages:[{role:'user',content}] })
     });
 
     if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||`HTTP ${res.status}`); }
@@ -403,8 +663,7 @@ async function analyzeImages() {
     renderResult(JSON.parse(m[0]));
 
   } catch(err) {
-    errBox.textContent = '❌ ' + err.message;
-    errBox.classList.add('show');
+    showErr(errBox, err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = '🔄 재분석';
@@ -412,63 +671,278 @@ async function analyzeImages() {
   }
 }
 
-// ── 결과 렌더링 ──
+function showErr(el, msg) { el.textContent = '❌ ' + msg; el.classList.add('show'); }
+
+// ── RENDER RESULT ──
 function renderResult(d) {
   document.getElementById('resultArea').classList.add('show');
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('heroTitle').textContent = `${d.date} ${d.location} 최고기온`;
+  document.getElementById('heroTitle').textContent = `${d.date} ${d.location}`;
   document.getElementById('heroObs').textContent = '📍 KMA · 인천공항 관측소';
   document.getElementById('heroTemp').textContent = d.predicted_max;
-  document.getElementById('statWind').textContent = d.wind_summary || '—';
-  document.getElementById('statRain').textContent = d.rain_prob || '—';
-  document.getElementById('statHumid').textContent = d.humidity || '—';
-  document.getElementById('statConf').textContent = d.confidence || '—';
+  document.getElementById('sWind').textContent = d.wind_summary || '—';
+  document.getElementById('sRain').textContent = d.rain_prob || '—';
+  document.getElementById('sHumid').textContent = d.humidity || '—';
+  document.getElementById('sConf').textContent = d.confidence || '—';
   buildChart(d.hourly || []);
   buildWind(d.wind || []);
-  document.getElementById('aiAnalysisText').textContent = d.analysis || '—';
-  buildFactors(d.up_factors || [], d.down_factors || []);
+  document.getElementById('upFactors').innerHTML = (d.up_factors||[]).map(f=>`<div class="frow"><span class="fl">${f.label}</span><span class="fv up">${f.val}</span></div>`).join('');
+  document.getElementById('downFactors').innerHTML = (d.down_factors||[]).map(f=>`<div class="frow"><span class="fl">${f.label}</span><span class="fv dn">${f.val}</span></div>`).join('');
   document.getElementById('verdictTemp').textContent = d.predicted_max + '°C';
-  document.getElementById('verdictRange').textContent = `가능 범위 ${d.predicted_range}°C · KMA 실측 예보 기준`;
-  document.getElementById('verdictConf').textContent = `✓ ${d.confidence} · ${d.verdict_reason || ''}`;
-  setTimeout(() => document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' }), 200);
+  document.getElementById('verdictRange').textContent = `범위 ${d.predicted_range}°C`;
+  document.getElementById('verdictConf').textContent = `✓ ${d.confidence} · ${d.verdict_reason||''}`;
+  document.getElementById('aiText').textContent = d.analysis || '—';
+  setTimeout(() => document.getElementById('resultArea').scrollIntoView({behavior:'smooth'}), 200);
 }
 
 function buildChart(hourly) {
-  const barsEl = document.getElementById('chartBars');
-  const lblsEl = document.getElementById('chartLabels');
-  barsEl.innerHTML = ''; lblsEl.innerHTML = '';
+  const bEl = document.getElementById('chartBars');
+  const lEl = document.getElementById('chartLabels');
+  bEl.innerHTML = ''; lEl.innerHTML = '';
   if (!hourly.length) return;
-  const temps = hourly.map(h => h.temp);
-  const minT = Math.min(...temps) - 2, maxT = Math.max(...temps);
+  const temps = hourly.map(h=>h.temp);
+  const minT = Math.min(...temps)-2, maxT = Math.max(...temps);
   hourly.forEach(d => {
-    const pct = ((d.temp - minT)/(maxT - minT))*80 + 12;
-    const type = d.type || (d.temp === maxT ? 'peak' : d.temp >= maxT-1 ? 'high' : 'mid');
-    const col = document.createElement('div'); col.className = 'bar-col';
-    const vl = document.createElement('div'); vl.className = 'bar-v';
-    vl.style.color = type==='peak' ? 'var(--amber)' : type==='high' ? '#e07b20' : 'var(--blue)';
-    vl.textContent = d.temp + '°';
-    const bar = document.createElement('div'); bar.className = 'bar ' + type; bar.style.height = '0px';
-    col.appendChild(vl); col.appendChild(bar); barsEl.appendChild(col);
-    const lbl = document.createElement('div'); lbl.className = 'bar-lbl'; lbl.style.flex = '1'; lbl.textContent = d.hour;
-    lblsEl.appendChild(lbl);
-    setTimeout(() => bar.style.height = pct + 'px', 150);
+    const pct = ((d.temp-minT)/(maxT-minT))*75+12;
+    const type = d.type||(d.temp===maxT?'peak':d.temp>=maxT-1?'high':'mid');
+    const col = document.createElement('div'); col.className='bar-col';
+    const vl = document.createElement('div'); vl.className='bar-v';
+    vl.style.color = type==='peak'?'var(--amber)':type==='high'?'#e07b20':'var(--blue)';
+    vl.textContent = d.temp+'°';
+    const bar = document.createElement('div'); bar.className='bar '+type; bar.style.height='0px';
+    col.appendChild(vl); col.appendChild(bar); bEl.appendChild(col);
+    const lbl = document.createElement('div'); lbl.className='bar-lbl'; lbl.style.flex='1'; lbl.textContent=d.hour;
+    lEl.appendChild(lbl);
+    setTimeout(()=>{ bar.style.height=pct+'px'; },100);
   });
 }
 
 function buildWind(wind) {
-  const el = document.getElementById('windScroll'); el.innerHTML = '';
+  const el = document.getElementById('windScroll'); el.innerHTML='';
   wind.forEach(w => {
-    const c = document.createElement('div'); c.className = 'wchip';
-    c.innerHTML = `<div class="wt">${w.hour}</div><div class="wd">${w.dir}</div><div class="ws">${w.speed}</div><div class="wh">${w.humid||'-'}</div>`;
+    const c = document.createElement('div'); c.className='wchip';
+    c.innerHTML=`<div class="wt">${w.hour}</div><div class="wd">${w.dir}</div><div class="ws">${w.speed}</div><div class="wh">${w.humid||'-'}</div>`;
     el.appendChild(c);
   });
 }
 
-function buildFactors(up, down) {
-  document.getElementById('upFactors').innerHTML = up.map(f => `<div class="frow"><span class="fl">${f.label}</span><span class="fv up">${f.val}</span></div>`).join('');
-  document.getElementById('downFactors').innerHTML = down.map(f => `<div class="frow"><span class="fl">${f.label}</span><span class="fv dn">${f.val}</span></div>`).join('');
+// ── OPEN-METEO FETCH ──
+function selectCity(btn, name, lat, lon) {
+  document.querySelectorAll('.city-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCity = {name, lat, lon};
 }
 
+async function fetchForecast() {
+  const btn = document.getElementById('fetchBtn');
+  const bar = document.getElementById('fetchBar');
+  const err = document.getElementById('fetchErr');
+  btn.disabled = true; bar.classList.add('show'); err.classList.remove('show');
+  btn.textContent = '⏳ 예보 가져오는 중...';
+
+  try {
+    const {lat, lon, name} = currentCity;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,windspeed_10m,relativehumidity_2m,winddirection_10m&timezone=Asia%2FSeoul&forecast_days=2`;
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Open-Meteo API 오류');
+    const data = await res.json();
+
+    // 이전 스냅샷 비교
+    const prevSnap = forecastSnapshot;
+    forecastSnapshot = data;
+    localStorage.setItem('we_forecast_snap', JSON.stringify({data, time: new Date().toISOString(), city: name}));
+
+    renderForecast(data, name, prevSnap);
+    document.getElementById('fetchTime').textContent = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+
+  } catch(e) {
+    showErr(err, e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔄 새로고침';
+    bar.classList.remove('show');
+  }
+}
+
+function renderForecast(data, cityName, prevSnap) {
+  const now = new Date();
+  const hours = data.hourly.time;
+  const temps = data.hourly.temperature_2m;
+  const precips = data.hourly.precipitation_probability;
+  const winds = data.hourly.windspeed_10m;
+  const humids = data.hourly.relativehumidity_2m;
+  const windDirs = data.hourly.winddirection_10m;
+
+  document.getElementById('forecastResult').style.display = 'block';
+
+  // 향후 24시간만 필터
+  const tbody = document.getElementById('forecastBody');
+  tbody.innerHTML = '';
+  let peakTemp = -99, peakHour = '—';
+  let count = 0;
+
+  hours.forEach((t, i) => {
+    const dt = new Date(t);
+    if (dt < now || count > 24) return;
+    count++;
+    const temp = temps[i];
+    if (temp > peakTemp) { peakTemp = temp; peakHour = dt.getHours()+'시'; }
+    const type = temp >= peakTemp ? 'peak' : temp >= peakTemp-1 ? 'high' : 'mid';
+    const dir = getWindDir(windDirs[i]);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--sub)">${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}시</td>
+      <td class="temp-cell ${type}">${temp.toFixed(1)}</td>
+      <td style="color:${precips[i]>30?'var(--cyan)':'var(--muted)'}">${precips[i]}%</td>
+      <td style="color:var(--blue)">${dir} ${winds[i].toFixed(0)}m</td>
+      <td style="color:var(--amber2)">${humids[i]}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('peakHour').textContent = `${peakHour} ${peakTemp.toFixed(1)}°C`;
+
+  // 변화 감지
+  if (prevSnap) {
+    detectRevisions(prevSnap, data, cityName);
+  }
+}
+
+function detectRevisions(oldData, newData, city) {
+  const oldTemps = oldData.hourly.temperature_2m;
+  const newTemps = newData.hourly.temperature_2m;
+  const hours = newData.hourly.time;
+  const now = new Date();
+  const flagged = [];
+
+  hours.forEach((t, i) => {
+    if (new Date(t) < now) return;
+    const diff = newTemps[i] - oldTemps[i];
+    if (Math.abs(diff) >= 1.0) {
+      flagged.push({ time: t, diff, oldVal: oldTemps[i], newVal: newTemps[i] });
+    }
+  });
+
+  const revCard = document.getElementById('revisionCard');
+  if (flagged.length === 0) {
+    revCard.innerHTML = '<div style="font-size:12px;color:var(--sub);text-align:center;padding:8px 0;">변화 없음 — 예보 안정적</div>';
+    return;
+  }
+
+  revCard.innerHTML = flagged.map(f => {
+    const dir = f.diff > 0 ? '▲' : '▼';
+    const col = f.diff > 0 ? 'var(--red)' : 'var(--cyan)';
+    const dt = new Date(f.time);
+    const timeStr = `${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}시`;
+    return `<div class="rev-item">
+      <div><div class="rev-time">${timeStr}</div><div class="rev-note">${city} · 예보 수정됨</div></div>
+      <div class="rev-change" style="color:${col}">${dir} ${Math.abs(f.diff).toFixed(1)}°C</div>
+    </div>`;
+  }).join('');
+
+  // 히스토리 저장
+  const entry = { time: new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), city, changes: flagged.length, diff: flagged[0].diff };
+  revisionHistory.unshift(entry);
+  if (revisionHistory.length > 20) revisionHistory.pop();
+  localStorage.setItem('we_revisions', JSON.stringify(revisionHistory));
+  renderRevisionLog();
+}
+
+function renderRevisionLog() {
+  const el = document.getElementById('revisionLog');
+  if (!revisionHistory.length) return;
+  el.innerHTML = revisionHistory.slice(0,8).map(r => {
+    const dir = r.diff > 0 ? '▲' : '▼';
+    const col = r.diff > 0 ? 'var(--red)' : 'var(--cyan)';
+    return `<div class="rev-item">
+      <div><div class="rev-time">${r.time} · ${r.city}</div><div class="rev-note">${r.changes}개 시간대 변화</div></div>
+      <div class="rev-change" style="color:${col}">${dir} ${Math.abs(r.diff).toFixed(1)}°C</div>
+    </div>`;
+  }).join('');
+}
+
+function getWindDir(deg) {
+  if (deg === undefined) return '—';
+  const dirs = ['북','북동','동','남동','남','남서','서','북서'];
+  return dirs[Math.round(deg/45)%8]+'풍';
+}
+
+// ── MARKOV ──
+function calcMarkov() {
+  const mkt = parseFloat(document.getElementById('mktPrice').value) || 0;
+  const model = parseFloat(document.getElementById('modelProb').value) || 0;
+  const persist = parseFloat(document.getElementById('statePersist').value) || 0;
+
+  const gap = (model/100) - (mkt/100);
+  const gapPct = (gap * 100).toFixed(1);
+  const persistPct = persist;
+
+  document.getElementById('gapVal').textContent = gapPct + '%';
+  document.getElementById('persistVal').textContent = persistPct + '%';
+  document.getElementById('gapFill').style.width = Math.min(Math.max(gap*100*3,0),100) + '%';
+  document.getElementById('persistFill').style.width = persistPct + '%';
+
+  const gapOk = gap >= 0.05;
+  const persistOk = persistPct >= 87;
+  const signalBox = document.getElementById('signalBox');
+  const signalVal = document.getElementById('signalVal');
+  const signalSub = document.getElementById('signalSub');
+
+  if (gapOk && persistOk) {
+    signalBox.className = 'signal-box enter';
+    signalVal.textContent = 'ENTER';
+    signalVal.style.color = 'var(--green)';
+    signalSub.textContent = `갭 ${gapPct}% ≥ 5% · 지속성 ${persistPct}% ≥ 87% ✓`;
+  } else if (!gapOk && !persistOk) {
+    signalBox.className = 'signal-box wait';
+    signalVal.textContent = 'WAIT';
+    signalVal.style.color = 'var(--red)';
+    signalSub.textContent = `갭 ${gapPct}% < 5% · 지속성 ${persistPct}% < 87% ✗`;
+  } else {
+    signalBox.className = 'signal-box neutral';
+    signalVal.textContent = 'PARTIAL';
+    signalVal.style.color = 'var(--amber)';
+    const missing = !gapOk ? `갭 부족 (${gapPct}%)` : `지속성 부족 (${persistPct}%)`;
+    signalSub.textContent = missing + ' — 대기';
+  }
+}
+
+// ── KELLY ──
+function calcKelly() {
+  const p = parseFloat(document.getElementById('winProb').value)/100 || 0;
+  const b = parseFloat(document.getElementById('odds').value) || 0;
+  const bank = parseFloat(document.getElementById('bankroll').value) || 0;
+  if (!p || !b) return;
+
+  const q = 1 - p;
+  const f = (p * b - q) / b; // Kelly fraction
+  const ev = (p * b - q).toFixed(3);
+
+  const kellyResult = document.getElementById('kellyResult');
+  kellyResult.className = 'kelly-result show';
+
+  document.getElementById('kellyPct').textContent = (f*100).toFixed(1) + '%';
+  document.getElementById('kellySub').textContent = `Kelly Fraction · EV = ${ev}`;
+  document.getElementById('kellyFull').textContent = bank ? `$${(bank*f).toFixed(2)}` : `${(f*100).toFixed(1)}%`;
+  document.getElementById('kellyHalf').textContent = bank ? `$${(bank*f*0.5).toFixed(2)}` : `${(f*50).toFixed(1)}%`;
+  document.getElementById('kellyQuarter').textContent = bank ? `$${(bank*f*0.25).toFixed(2)}` : `${(f*25).toFixed(1)}%`;
+  document.getElementById('kellyEV').textContent = ev > 0 ? `+${ev} (EV+)` : `${ev} (EV-)`;
+
+  // 시나리오
+  if (bank) {
+    const betAmt = bank * f * 0.5; // Half Kelly
+    const profit = betAmt * (b - 1);
+    const loss = betAmt;
+    document.getElementById('scenCard').innerHTML = `
+      <div class="row"><span class="rl">Half Kelly 베팅액</span><span class="rv amber">$${betAmt.toFixed(2)}</span></div>
+      <div class="row"><span class="rl">승리 시 수익</span><span class="rv green">+$${profit.toFixed(2)}</span></div>
+      <div class="row"><span class="rl">패배 시 손실</span><span class="rv red">-$${loss.toFixed(2)}</span></div>
+      <div class="row"><span class="rl">수익률</span><span class="rv amber">+${((profit/betAmt)*100).toFixed(0)}%</span></div>
+    `;
+  }
+}
+
+// ── PM CALC ──
 function calcPM() {
   const price = parseFloat(document.getElementById('pmPrice').value);
   const amount = parseFloat(document.getElementById('pmAmount').value);
@@ -476,8 +950,13 @@ function calcPM() {
   const shares = amount / (price/100);
   const profit = shares - amount;
   const roi = (profit/amount*100).toFixed(1);
-  const el = document.getElementById('pmResult'); el.className = 'pm-result show';
-  el.innerHTML = `<div class="pm-line"><span>취득 주수</span><span class="pv">${shares.toFixed(1)}주</span></div><div class="pm-line"><span>회수액</span><span class="pv">$${shares.toFixed(2)}</span></div><div class="pm-line total"><span>순수익</span><span class="pv">+$${profit.toFixed(2)} · +${roi}%</span></div>`;
+  const el = document.getElementById('pmResult');
+  el.className = 'pm-result show';
+  el.innerHTML = `
+    <div class="pm-line"><span>취득 주수</span><span class="pv">${shares.toFixed(1)}주</span></div>
+    <div class="pm-line"><span>회수액</span><span class="pv">$${shares.toFixed(2)}</span></div>
+    <div class="pm-line total"><span>순수익</span><span class="pv">+$${profit.toFixed(2)} · +${roi}%</span></div>
+  `;
 }
 </script>
 </body>
