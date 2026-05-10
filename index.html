@@ -632,8 +632,29 @@ async function analyzeImages() {
   const apiKey = localStorage.getItem('pm-apikey');
   if (!apiKey) { showErr(errBox,'API 키 없음 — 위에서 입력하세요'); btn.disabled=false; bar.classList.remove('show'); return; }
 
-  const prompt = `Polymarket 기온 예측 분석가입니다. 날씨 데이터를 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
-{"date":"날짜","location":"인천공항","kma_max":21,"predicted_max":21,"predicted_range":"20~21","confidence":"HIGH","hourly":[{"hour":"12시","temp":21,"type":"peak"}],"wind":[{"hour":"12시","dir":"남풍","speed":"5m/s","humid":"65%"}],"wind_summary":"남풍 5m/s","rain_prob":"0%","humidity":"65%","up_factors":[{"label":"🌬️ 남풍","val":"+1°C"}],"down_factors":[{"label":"☁️ 구름","val":"-0.5°"}],"analysis":"종합 분석","verdict_reason":"판단 근거"}`;
+  const prompt = `Polymarket 기온 예측 전문 분석가입니다. 날씨 데이터를 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
+
+[기상 요인 판단 규칙 - 반드시 준수]
+상승 요인 (up_factors):
+- 남풍/남서풍: +0.5~1°C
+- 맑음/강한 일사: +0.5~1°C
+- 저습도(40% 이하): +0.3°C
+- 고기압 중심: +0.5°C
+
+억제 요인 (down_factors):
+- 구름많음/흐림: -0.5~1°C (구름은 반드시 억제 요인!)
+- 비/약한비: -1~2°C (강수는 반드시 억제 요인!)
+- 높은 습도(70% 이상): -0.5°C
+- 동풍/북동풍: -0.5~1°C
+- 해풍: -0.5~1°C
+
+[예측 규칙]
+- KMA 공식 예보를 기준값으로 사용
+- 상승/억제 요인을 합산하여 최종 예측값 도출
+- 비가 오면 KMA 예보값 그대로 또는 -1°C 적용
+- 남풍+맑음이면 KMA 예보값 그대로 또는 +0.5°C 적용
+
+{"date":"날짜","location":"인천공항","kma_max":19,"predicted_max":19,"predicted_range":"19~20","confidence":"HIGH","hourly":[{"hour":"11시","temp":19,"type":"peak"}],"wind":[{"hour":"12시","dir":"동풍","speed":"0.6m/s","humid":"76%"}],"wind_summary":"동풍 0.6m/s","rain_prob":"60%","humidity":"76%","up_factors":[{"label":"☀️ 오전 구름틈 일사","val":"+0.3°C"}],"down_factors":[{"label":"🌧️ 오후 약한비","val":"-1°C"},{"label":"☁️ 흐림","val":"-0.5°C"},{"label":"💧 높은습도","val":"-0.5°C"}],"analysis":"종합 분석","verdict_reason":"KMA 19°C + 비·흐림 억제"}`;
 
   try {
     let content;
