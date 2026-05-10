@@ -99,9 +99,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .pm-line .pv{font-family:'DM Mono',monospace;color:var(--text);font-weight:500;}
 .pm-line.total{border-top:1px solid var(--border);margin-top:6px;padding-top:8px;}
 .pm-line.total .pv{color:var(--green);font-size:15px;}
-.empty-state{text-align:center;padding:36px 20px;color:var(--sub);}
-.empty-state .es-icon{font-size:40px;margin-bottom:12px;}
-.empty-state .es-text{font-size:13px;line-height:1.7;}
+/* MODE TABS */
+.mode-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.mode-tab{flex:1;padding:9px;background:var(--s2);border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--sub);cursor:pointer;text-align:center;letter-spacing:1px;}
+.mode-tab.active{border-color:var(--amber);color:var(--amber);background:rgba(245,166,35,0.07);}
+/* TEXT INPUT */
+.text-zone{display:none;}
+.text-zone.show{display:block;}
+.img-zone{display:block;}
+.img-zone.hide{display:none;}
+.paste-area{width:100%;min-height:140px;background:var(--s2);border:1.5px dashed var(--border2);border-radius:12px;padding:14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.7;resize:vertical;outline:none;}
+.paste-area:focus{border-color:var(--amber);}
+.paste-area::placeholder{color:var(--muted);}
+.paste-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:6px;text-align:center;}
 .footer{text-align:center;padding:20px 16px 32px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;line-height:1.8;}
 .error-box{margin:10px 14px;background:rgba(255,69,96,0.08);border:1px solid rgba(255,69,96,0.25);border-radius:10px;padding:14px;font-size:12px;color:var(--red);display:none;}
 .error-box.show{display:block;}
@@ -115,17 +125,33 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </div>
 
 <div class="upload-section">
-  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-    <div class="uz-icon">📸</div>
-    <div class="uz-title">날씨 스크린샷 업로드</div>
-    <div class="uz-sub">기상청 날씨누리 · KMA 앱<br>여러 장 동시 선택 가능 (최대 5장)</div>
-    <div class="uz-hint">// TAP TO UPLOAD · MULTIPLE FILES SUPPORTED</div>
-  </div>
-  <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this)">
 
-  <div id="previewGrid"></div>
-  <div id="fileCount"></div>
-  <button id="clearBtn" onclick="clearFiles()">✕ 전체 제거</button>
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabImg" onclick="switchMode('img')">📸 스크린샷</button>
+    <button class="mode-tab" id="tabTxt" onclick="switchMode('txt')">📋 텍스트 붙여넣기</button>
+  </div>
+
+  <!-- IMAGE MODE -->
+  <div class="img-zone" id="imgZone">
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <div class="uz-icon">📸</div>
+      <div class="uz-title">날씨 스크린샷 업로드</div>
+      <div class="uz-sub">기상청 날씨누리 · KMA 앱<br>여러 장 동시 선택 가능 (최대 5장)</div>
+      <div class="uz-hint">// TAP TO UPLOAD · MULTIPLE FILES SUPPORTED</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this)">
+    <div id="previewGrid"></div>
+    <div id="fileCount"></div>
+    <button id="clearBtn" onclick="clearFiles()">✕ 전체 제거</button>
+  </div>
+
+  <!-- TEXT MODE -->
+  <div class="text-zone" id="txtZone">
+    <textarea class="paste-area" id="pasteArea"
+      placeholder="여기에 날씨 데이터를 붙여넣기 하세요&#10;&#10;예시:&#10;10일(일) 최고 21°C&#10;12시 21°C 남풍 5m/s 습도 65%&#10;13시 21°C 남풍 5m/s&#10;강수확률 0%&#10;..."></textarea>
+    <div class="paste-hint">// KMA 날씨누리 · 기상청 앱 · 해양기상포털 텍스트 모두 가능</div>
+  </div>
 
   <button class="analyze-btn" id="analyzeBtn" onclick="analyzeImages()" disabled>
     ⚡ AI 분석 시작
@@ -221,6 +247,24 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 <script>
 let imageFiles = [];
+let currentMode = 'img';
+
+// ── 모드 전환 ──
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabImg').classList.toggle('active', mode==='img');
+  document.getElementById('tabTxt').classList.toggle('active', mode==='txt');
+  document.getElementById('imgZone').classList.toggle('hide', mode==='txt');
+  document.getElementById('txtZone').classList.toggle('show', mode==='txt');
+  if (mode==='txt') {
+    const ta = document.getElementById('pasteArea');
+    ta.oninput = () => { document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10; };
+    document.getElementById('analyzeBtn').disabled = ta.value.trim().length < 10;
+    document.getElementById('emptyState').style.display='none';
+  } else {
+    document.getElementById('analyzeBtn').disabled = imageFiles.length===0;
+  }
+}
 
 // ── API KEY (POLYMASTER와 동일한 localStorage 키) ──
 function saveKey() {
@@ -311,58 +355,52 @@ zone.addEventListener('drop', e => {
   if (dt.files.length) { document.getElementById('fileInput').files = dt.files; handleFiles(document.getElementById('fileInput')); }
 });
 
-// ── AI 분석 ──
+// ── AI 분석 (이미지 + 텍스트 모드) ──
 async function analyzeImages() {
-  if (!imageFiles.length) return;
   const btn = document.getElementById('analyzeBtn');
   const bar = document.getElementById('loadingBar');
   const errBox = document.getElementById('errorBox');
   btn.disabled = true;
-  btn.textContent = `⏳ ${imageFiles.length}장 분석 중...`;
   bar.classList.add('show');
   errBox.classList.remove('show');
 
-  const prompt = `당신은 Polymarket 기온 예측 전문 분석가입니다.
-첨부된 기상청(KMA) 날씨 스크린샷 ${imageFiles.length}장을 모두 종합 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
+  const apiKey = localStorage.getItem('pm-apikey');
+  if (!apiKey) {
+    errBox.textContent = '❌ API 키 없음 — 아래에서 입력하세요';
+    errBox.classList.add('show');
+    btn.disabled = false; bar.classList.remove('show'); return;
+  }
 
-{"date":"5월 10일","location":"인천공항","kma_max":21,"predicted_max":21,"predicted_range":"20~21","confidence":"HIGH","hourly":[{"hour":"12시","temp":21,"type":"peak"},{"hour":"13시","temp":21,"type":"peak"}],"wind":[{"hour":"12시","dir":"남풍","speed":"5m/s","humid":"65%"}],"wind_summary":"남풍 5m/s","rain_prob":"0%","humidity":"65%","up_factors":[{"label":"🌬️ 남풍","val":"+1°C"}],"down_factors":[{"label":"☁️ 구름","val":"-0.5°"}],"analysis":"종합 분석 내용","verdict_reason":"판단 근거"}
-
-실제 스크린샷 데이터를 정확히 읽어서 JSON을 채워주세요.`;
+  const basePrompt = `당신은 Polymarket 기온 예측 전문 분석가입니다. 날씨 데이터를 분석해서 아래 JSON만 반환하세요. 다른 텍스트 없이 순수 JSON만.
+{"date":"날짜","location":"인천공항","kma_max":21,"predicted_max":21,"predicted_range":"20~21","confidence":"HIGH","hourly":[{"hour":"12시","temp":21,"type":"peak"}],"wind":[{"hour":"12시","dir":"남풍","speed":"5m/s","humid":"65%"}],"wind_summary":"남풍 5m/s","rain_prob":"0%","humidity":"65%","up_factors":[{"label":"🌬️ 남풍","val":"+1°C"}],"down_factors":[{"label":"☁️ 구름","val":"-0.5°"}],"analysis":"종합 분석","verdict_reason":"판단 근거"}
+실제 데이터를 정확히 읽어서 JSON을 채워주세요.`;
 
   try {
-    const contentArr = imageFiles.map(f => ({
-      type: 'image',
-      source: { type: 'base64', media_type: f.type, data: f.base64 }
-    }));
-    contentArr.push({ type: 'text', text: prompt });
-
-    const apiKey = localStorage.getItem('pm-apikey');
-    if (!apiKey) throw new Error('API 키 없음 — 아래에서 입력하세요');
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: contentArr }]
-      })
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    let content;
+    if (currentMode === 'txt') {
+      btn.textContent = '⏳ 텍스트 분석 중...';
+      const txt = document.getElementById('pasteArea').value.trim();
+      if (!txt) throw new Error('텍스트를 입력해주세요');
+      content = [{ type:'text', text: basePrompt + '\n\n[날씨 데이터]\n' + txt }];
+    } else {
+      if (!imageFiles.length) throw new Error('이미지를 먼저 업로드하세요');
+      btn.textContent = `⏳ ${imageFiles.length}장 분석 중...`;
+      content = imageFiles.map(f => ({ type:'image', source:{type:'base64',media_type:f.type,data:f.base64} }));
+      content.push({ type:'text', text: basePrompt });
     }
 
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content}] })
+    });
+
+    if (!res.ok) { const e=await res.json(); throw new Error(e.error?.message||`HTTP ${res.status}`); }
     const data = await res.json();
     const raw = data.content[0].text;
-    const cleaned = raw.replace(/```json|```/g, '').trim();
-    renderResult(JSON.parse(cleaned));
+    const m = raw.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('JSON 파싱 실패');
+    renderResult(JSON.parse(m[0]));
 
   } catch(err) {
     errBox.textContent = '❌ ' + err.message;
